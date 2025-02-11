@@ -294,17 +294,52 @@
     </div>
 
     <!-- 2. Swipe Section -->
-    <div class="swipe-container" id="swipeContainer">
-        <div class="profile-card" id="profileCard">
-            <img src="image0.jpg" class="profile-image" alt="Your Photo">
-            <div class="profile-info">
-                <h2>Atila : 16 yr</h2>
-                <p style="color: #ff3b3b;">The right man for you</p>
-                <p style="color: #666;">Your future husband!!</p>
-            </div>
+  <!-- In the Swipe Section -->
+<div class="swipe-container" id="swipeContainer">
+    <div class="profile-card" id="profileCard">
+        <!-- Replace img with video -->
+        <video class="profile-video" autoplay muted loop playsinline>
+            <source src="sigma.mov" type="video/mov">
+            Your browser does not support the video tag.
+        </video>
+        <div class="profile-info">
+            <h2>Atila : 16 yr</h2>
+            <p style="color: #ff3b3b;">The right man for you</p>
+            <p style="color: #666;">Your future husband!!</p>
         </div>
     </div>
+</div>
 
+<style>
+    /* Add video styling */
+    .profile-video {
+        width: 100%;
+        height: 70%;
+        object-fit: cover;
+        border-radius: 25px 25px 0 0;
+    }
+
+    /* Hide default video controls */
+    video::-webkit-media-controls {
+        display: none !important;
+    }
+</style>
+
+<script>
+    // Add video play/pause on interaction
+    const profileVideo = document.querySelector('.profile-video');
+    
+    // Play video when card is visible
+    document.getElementById('swipeContainer').addEventListener('click', () => {
+        profileVideo.play();
+    });
+
+    // Optional: Pause when envelope opens
+    function showEnvelope() {
+        profileVideo.pause();
+        // ... rest of your existing code
+    }
+</script>
     <!-- 3. Envelope -->
     <div class="envelope-container" id="envelopeContainer">
         <div class="envelope">
