@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Surprise 💖</title>
+    <style>
+        /* Base Styles */
+        body {
+            margin: 0;
+            font-family: 'Pacifico', cursive;
+            background: #ff3b3b;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Questionnaire */
+        .question-phase {
+            padding: 20px;
+        }
+
+        .question {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 500px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        textarea, input {
+            width: 80%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ff3b3b;
+            border-radius: 10px;
+        }
+
+        button {
+            background: #ff3b3b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        /* Swipe Section */
+        .swipe-container {
+            display: none;
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            touch-action: pan-y;
+        }
+
+        .profile-card {
+            position: absolute;
+            width: 85%;
+            max-width: 400px;
+            height: 70vh;
+            background: white;
+            border-radius: 20px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 70%;
+            object-fit: cover;
+        }
+
+        /* Envelope Section */
+        .envelope-container {
+            perspective: 1000px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 300px;
+            display: none;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .envelope-front, .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope-front {
+            background: #ff4444;
+            transform: rotateX(0deg);
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-direction: column;
+        }
+
+        .envelope-back {
+            background: #fff;
+            transform: rotateX(180deg);
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .envelope.open {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-back-content {
+            width: 100%;
+            line-height: 1.6;
+        }
+
+        .envelope-back h3 {
+            font-size: 28px;
+            margin: 0 0 15px 0;
+            color: #ff4444;
+        }
+
+        .envelope-back p {
+            font-size: 20px;
+            margin: 10px 0;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        /* Surprise Photos */
+        .surprise-photo {
+            position: fixed;
+            max-width: 200px;
+            border: 5px solid white;
+            border-radius: 10px;
+            animation: popIn 0.5s ease-out;
+            z-index: 999;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* Animations */
+        .heart {
+            animation: heartbeat 1.2s infinite;
+            font-size: 40px;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- 1. Questionnaire -->
+<div class="question-phase" id="questionPhase">
+    <div class="question" id="q1">
+        <h2>Do you want a future with Atila? 🌟</h2>
+        <textarea rows="3"></textarea>
+        <button onclick="nextQuestion(2)">Next ➡️</button>
+    </div>
+    <div class="question" id="q2" style="display:none;">
+        <h2>How much do you love Atila? 💞</h2>
+        <textarea rows="3"></textarea>
+        <button onclick="nextQuestion(3)">Next ➡️</button>
+    </div>
+    <div class="question" id="q3" style="display:none;">
+        <h2>Where should we live when we are older? 🌍</h2>
+        <input type="text">
+        <button onclick="showSwipe()">Continue ➡️</button>
+    </div>
+</div>
+
+<!-- 2. Swipe Section -->
+<div class="swipe-container" id="swipeContainer">
+    <div class="profile-card" id="profileCard">
+        <img src="image0.jpg" class="profile-image" alt="Your Photo">
+        <div class="profile-info">
+            <h2>Atila : 16 yr</h2>
+            <p style="color: #ff3b3b;"> The right man for you</p>
+            <p style="color: #666;">️ Your future husband!!</p>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Envelope -->
+<div class="envelope-container" id="envelopeContainer">
+    <div class="envelope">
+        <div class="envelope-front">
+            <div class="heart">💌</div>
+            <p>Click to open your surprise!</p>
+        </div>
+        <div class="envelope-back">
+            <div class="envelope-back-content">
+                <h3>To My Queen 💖</h3>
+                <p>The only and most beautiful</p>
+                <p>Will you be my valentines??</p>
+                <p>I love you so much</p>
+                <p> Your Prince <p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======== CONFIG ======== //
+    const PHOTOS = [
+        '1.png',
+        '2.png',
+        '3.png'
+    ];
+    const DEVIL_SITE = 'https://youtube.com/shorts/_ocaTEGBo-Y?si=Py_dOE3KGIOUG2iP';
+    const SWIPE_THRESHOLD = 60;
+    // ======================= //
+
+    let currentQuestion = 1;
+    let isSwiping = false;
+    let startX = 0;
+
+    // 1. Questionnaire Flow
+    function nextQuestion(qNum) {
+        document.getElementById(`q${currentQuestion}`).style.display = 'none';
+        document.getElementById(`q${qNum}`).style.display = 'block';
+        currentQuestion = qNum;
+    }
+
+    function showSwipe() {
+        document.getElementById('questionPhase').style.display = 'none';
+        document.getElementById('swipeContainer').style.display = 'block';
+        initSwipe();
+    }
+
+    // 2. Swipe Handling
+    function initSwipe() {
+        const container = document.getElementById('swipeContainer');
+
+        container.addEventListener('touchstart', e => {
+            isSwiping = true;
+            startX = e.touches[0].clientX;
+        });
+
+        container.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            const currentX = e.touches[0].clientX;
+            updateCardPosition(currentX - startX);
+        });
+
+        container.addEventListener('touchend', e => {
+            handleSwipeEnd(e.changedTouches[0].clientX - startX);
+            isSwiping = false;
+        });
+
+        container.addEventListener('mousedown', e => {
+            isSwiping = true;
+            startX = e.clientX;
+        });
+
+        container.addEventListener('mousemove', e => {
+            if (!isSwiping) return;
+            updateCardPosition(e.clientX - startX);
+        });
+
+        container.addEventListener('mouseup', e => {
+            handleSwipeEnd(e.clientX - startX);
+            isSwiping = false;
+        });
+
+        function updateCardPosition(delta) {
+            const card = document.getElementById('profileCard');
+            card.style.transform = `
+                    translate(calc(-50% + ${delta * 0.5}px), -50%)
+                    rotate(${delta * 0.1}deg)
+                `;
+        }
+
+        function handleSwipeEnd(delta) {
+            if (Math.abs(delta) > SWIPE_THRESHOLD) {
+                if (delta > 0) { // Swiped Right
+                    showEnvelope();
+                } else { // Swiped Left
+                    window.location.href = DEVIL_SITE;
+                }
+            }
+            document.getElementById('profileCard').style.transform = 'translate(-50%, -50%)';
+        }
+    }
+
+    // 3. Envelope & Surprises
+    function showEnvelope() {
+        document.getElementById('swipeContainer').style.display = 'none';
+        const envelopeContainer = document.getElementById('envelopeContainer');
+        envelopeContainer.style.display = 'block';
+
+        envelopeContainer.addEventListener('click', function() {
+            const envelope = this.querySelector('.envelope');
+            envelope.classList.toggle('open');
+            startPhotoSurprises();
+        });
+    }
+
+    function startPhotoSurprises() {
+        setInterval(() => {
+            const photo = document.createElement('img');
+            photo.className = 'surprise-photo';
+            photo.src = PHOTOS[Math.floor(Math.random() * PHOTOS.length)];
+            photo.style.top = Math.random() * 80 + '%';
+            photo.style.left = Math.random() * 80 + '%';
+            photo.onclick = () => photo.remove();
+            document.body.appendChild(photo);
+            setTimeout(() => photo.remove(), 3000);
+        }, 2000);
+
+        // Confetti effect
+        for(let i = 0; i < 20; i++) {
+            createConfetti();
+        }
+    }
+
+    function createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.innerHTML = ['💖', '🎉', '✨', '💫'][Math.floor(Math.random()*4)];
+        confetti.style.position = 'fixed';
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+    }
+</script>
+</body>
+</html>
