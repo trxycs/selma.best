@@ -81,27 +81,21 @@
             position: fixed;
             width: 100%;
             height: 100vh;
-            touch-action: none;
         }
 
         .profile-card {
             position: absolute;
-            width: 95%;
-            max-width: 450px;
-            height: 85vh;
+            width: 90%;
+            max-width: 420px;
+            height: 75vh;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 25px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            cursor: grab;
-        }
-
-        .profile-card:active {
-            cursor: grabbing;
         }
 
         .profile-image {
@@ -120,6 +114,46 @@
             font-size: 1.8rem;
             margin: 0 0 15px 0;
             color: #ff3b3b;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 3;
+        }
+
+        .action-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button:hover {
+            transform: scale(1.1);
+        }
+
+        .reject-btn {
+            background: #ff4444;
+            color: white;
+        }
+
+        .accept-btn {
+            background: #4CAF50;
+            color: white;
         }
 
         /* Envelope Section */
@@ -294,11 +328,11 @@
         <div class="question" id="q3" style="display:none;">
             <h2>Where should we live when we are older? 🌍</h2>
             <input type="text">
-            <button onclick="showSwipe()">Continue ➡️</button>
+            <button onclick="showChoiceSection()">Continue ➡️</button>
         </div>
     </div>
 
-    <!-- 2. Swipe Section -->
+    <!-- 2. Choice Section -->
     <div class="swipe-container" id="swipeContainer">
         <div class="profile-card" id="profileCard">
             <img src="image0.jpg" class="profile-image" alt="Your Photo">
@@ -307,6 +341,10 @@
                 <p style="color: #ff3b3b;">The right man for you</p>
                 <p style="color: #666;">Your future husband!!</p>
             </div>
+        </div>
+        <div class="action-buttons">
+            <button class="action-button reject-btn" onclick="swipeLeft()">👎</button>
+            <button class="action-button accept-btn" onclick="swipeRight()">❤️</button>
         </div>
     </div>
 
@@ -337,14 +375,10 @@
     // ======== CONFIG ======== //
     const PHOTOS = ['1.png', '2.png', '3.png'];
     const DEVIL_SITE = 'https://youtube.com/shorts/_ocaTEGBo-Y?si=Py_dOE3KGIOUG2iP';
-    const SWIPE_THRESHOLD = 30; // Reduced threshold
     const SWIPE_SOUND = 'https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3';
     // ======================= //
 
     let currentQuestion = 1;
-    let isSwiping = false;
-    let startX = 0;
-    let currentDelta = 0;
     let isMusicPlaying = false;
 
     // Music Setup
@@ -368,72 +402,24 @@
         updateProgressDots();
     }
 
-    function showSwipe() {
+    function showChoiceSection() {
         document.getElementById('questionPhase').style.display = 'none';
         document.getElementById('swipeContainer').style.display = 'block';
-        initSwipe();
     }
 
-    // Swipe Handling
-    function initSwipe() {
-        const container = document.getElementById('swipeContainer');
+    // Button Handlers
+    function swipeLeft() {
         const card = document.getElementById('profileCard');
-        let animationFrame;
+        card.style.transform = `translate(-150%, -50%) rotate(-30deg)`;
+        new Audio(SWIPE_SOUND).play();
+        setTimeout(() => window.location.href = DEVIL_SITE, 300);
+    }
 
-        const handleStart = (clientX) => {
-            isSwiping = true;
-            startX = clientX;
-            currentDelta = 0;
-            card.style.transition = 'none';
-        };
-
-        const handleMove = (clientX) => {
-            if (!isSwiping) return;
-            cancelAnimationFrame(animationFrame);
-            
-            animationFrame = requestAnimationFrame(() => {
-                currentDelta = clientX - startX;
-                const rotation = Math.min(30, Math.max(-30, currentDelta * 0.15));
-                
-                card.style.transform = `
-                    translate(calc(-50% + ${currentDelta}px), -50%)
-                    rotate(${rotation}deg)
-                `;
-            });
-        };
-
-        const handleEnd = () => {
-            if (!isSwiping) return;
-            isSwiping = false;
-            cancelAnimationFrame(animationFrame);
-            
-            card.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            
-            if (Math.abs(currentDelta) > SWIPE_THRESHOLD) {
-                if (navigator.vibrate) navigator.vibrate(50);
-                new Audio(SWIPE_SOUND).play();
-                if (currentDelta > 0) {
-                    card.style.transform = `translate(150%, -50%) rotate(30deg)`;
-                    setTimeout(showEnvelope, 300);
-                } else {
-                    card.style.transform = `translate(-150%, -50%) rotate(-30deg)`;
-                    setTimeout(() => window.location.href = DEVIL_SITE, 300);
-                }
-            } else {
-                card.style.transform = 'translate(-50%, -50%)';
-            }
-        };
-
-        // Event Listeners
-        container.addEventListener('touchstart', e => handleStart(e.touches[0].clientX));
-        container.addEventListener('touchmove', e => handleMove(e.touches[0].clientX));
-        container.addEventListener('touchend', handleEnd);
-
-        container.addEventListener('mousedown', e => handleStart(e.clientX));
-        document.addEventListener('mousemove', e => {
-            if (isSwiping) handleMove(e.clientX);
-        });
-        document.addEventListener('mouseup', handleEnd);
+    function swipeRight() {
+        const card = document.getElementById('profileCard');
+        card.style.transform = `translate(150%, -50%) rotate(30deg)`;
+        new Audio(SWIPE_SOUND).play();
+        setTimeout(showEnvelope, 300);
     }
 
     // Envelope & Surprises
