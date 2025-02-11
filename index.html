@@ -81,14 +81,14 @@
             position: fixed;
             width: 100%;
             height: 100vh;
-            touch-action: pan-y;
+            touch-action: none;
         }
 
         .profile-card {
             position: absolute;
-            width: 90%;
-            max-width: 420px;
-            height: 75vh;
+            width: 95%;
+            max-width: 450px;
+            height: 85vh;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 25px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
@@ -97,6 +97,11 @@
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
+            cursor: grab;
+        }
+
+        .profile-card:active {
+            cursor: grabbing;
         }
 
         .profile-image {
@@ -332,7 +337,7 @@
     // ======== CONFIG ======== //
     const PHOTOS = ['1.png', '2.png', '3.png'];
     const DEVIL_SITE = 'https://youtube.com/shorts/_ocaTEGBo-Y?si=Py_dOE3KGIOUG2iP';
-    const SWIPE_THRESHOLD = 60;
+    const SWIPE_THRESHOLD = 30; // Reduced threshold
     const SWIPE_SOUND = 'https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3';
     // ======================= //
 
@@ -405,11 +410,12 @@
             card.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             
             if (Math.abs(currentDelta) > SWIPE_THRESHOLD) {
+                if (navigator.vibrate) navigator.vibrate(50);
                 new Audio(SWIPE_SOUND).play();
-                if (currentDelta > 0) { // Swiped Right
+                if (currentDelta > 0) {
                     card.style.transform = `translate(150%, -50%) rotate(30deg)`;
                     setTimeout(showEnvelope, 300);
-                } else { // Swiped Left
+                } else {
                     card.style.transform = `translate(-150%, -50%) rotate(-30deg)`;
                     setTimeout(() => window.location.href = DEVIL_SITE, 300);
                 }
@@ -424,10 +430,10 @@
         container.addEventListener('touchend', handleEnd);
 
         container.addEventListener('mousedown', e => handleStart(e.clientX));
-        container.addEventListener('mousemove', e => handleMove(e.clientX));
-        container.addEventListener('mouseup', handleEnd);
-
-        card.style.transform = 'translate(-50%, -50%)';
+        document.addEventListener('mousemove', e => {
+            if (isSwiping) handleMove(e.clientX);
+        });
+        document.addEventListener('mouseup', handleEnd);
     }
 
     // Envelope & Surprises
@@ -473,9 +479,14 @@
 
     // Music Control
     musicControl.addEventListener('click', () => {
-        isMusicPlaying = !isMusicPlaying;
+        if (bgMusic.paused) {
+            bgMusic.play().catch(() => {});
+            isMusicPlaying = true;
+        } else {
+            bgMusic.pause();
+            isMusicPlaying = false;
+        }
         musicControl.textContent = isMusicPlaying ? '🎵' : '🔇';
-        isMusicPlaying ? bgMusic.play() : bgMusic.pause();
     });
 
     // Initial setup
