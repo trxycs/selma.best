@@ -9,41 +9,70 @@
         body {
             margin: 0;
             font-family: 'Pacifico', cursive;
-            background: #ff3b3b;
+            background: linear-gradient(45deg, #ff758c, #ff7eb3);
             height: 100vh;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating Hearts */
+        .floating-hearts span {
+            position: absolute;
+            opacity: 0;
+            animation: float 8s infinite linear;
+            font-size: 1.5rem;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
         /* Questionnaire */
         .question-phase {
             padding: 20px;
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .question {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
             margin: 20px auto;
             max-width: 500px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
         }
 
-        textarea, input {
-            width: 80%;
-            margin: 10px 0;
-            padding: 10px;
-            border: 2px solid #ff3b3b;
-            border-radius: 10px;
+        /* Progress Dots */
+        .progress-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        button {
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
             background: #ff3b3b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: transform 0.3s;
+            transform: scale(1.3);
         }
 
         /* Swipe Section */
@@ -57,28 +86,40 @@
 
         .profile-card {
             position: absolute;
-            width: 85%;
-            max-width: 400px;
-            height: 70vh;
-            background: white;
-            border-radius: 20px;
+            width: 90%;
+            max-width: 420px;
+            height: 75vh;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-            transition: transform 0.3s;
         }
 
         .profile-image {
             width: 100%;
             height: 70%;
             object-fit: cover;
+            border-radius: 25px 25px 0 0;
+        }
+
+        .profile-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            color: #ff3b3b;
         }
 
         /* Envelope Section */
         .envelope-container {
-            perspective: 1000px;
+            perspective: 1200px;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -94,8 +135,12 @@
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.8s;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform-style: preserve-3d;
+        }
+
+        .envelope:hover:not(.open) {
+            transform: translateY(-5px);
         }
 
         .envelope-front, .envelope-back {
@@ -130,22 +175,30 @@
             transform: rotateX(180deg);
         }
 
-        .envelope-back-content {
-            width: 100%;
-            line-height: 1.6;
+        /* Love Letter */
+        .love-letter {
+            position: relative;
+            padding: 30px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .envelope-back h3 {
-            font-size: 28px;
-            margin: 0 0 15px 0;
+        .love-letter::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 15px solid #fff;
+        }
+
+        .signature {
+            margin-top: 20px;
+            font-style: italic;
             color: #ff4444;
-        }
-
-        .envelope-back p {
-            font-size: 20px;
-            margin: 10px 0;
-            white-space: normal;
-            word-wrap: break-word;
         }
 
         /* Surprise Photos */
@@ -156,6 +209,12 @@
             border-radius: 10px;
             animation: popIn 0.5s ease-out;
             z-index: 999;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .surprise-photo:hover {
+            transform: scale(1.05);
         }
 
         @keyframes popIn {
@@ -176,80 +235,132 @@
             45% { transform: scale(1.15); }
             60% { transform: scale(1); }
         }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1001;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- 1. Questionnaire -->
-<div class="question-phase" id="questionPhase">
-    <div class="question" id="q1">
-        <h2>Do you want a future with Atila? 🌟</h2>
-        <textarea rows="3"></textarea>
-        <button onclick="nextQuestion(2)">Next ➡️</button>
+    <!-- Floating Hearts -->
+    <div class="floating-hearts">
+        <span style="left:10%">❤️</span>
+        <span style="left:30%">💖</span>
+        <span style="left:50%">💘</span>
+        <span style="left:70%">💝</span>
+        <span style="left:90%">💕</span>
     </div>
-    <div class="question" id="q2" style="display:none;">
-        <h2>How much do you love Atila? 💞</h2>
-        <textarea rows="3"></textarea>
-        <button onclick="nextQuestion(3)">Next ➡️</button>
-    </div>
-    <div class="question" id="q3" style="display:none;">
-        <h2>Where should we live when we are older? 🌍</h2>
-        <input type="text">
-        <button onclick="showSwipe()">Continue ➡️</button>
-    </div>
-</div>
 
-<!-- 2. Swipe Section -->
-<div class="swipe-container" id="swipeContainer">
-    <div class="profile-card" id="profileCard">
-        <img src="image0.jpg" class="profile-image" alt="Your Photo">
-        <div class="profile-info">
-            <h2>Atila : 16 yr</h2>
-            <p style="color: #ff3b3b;"> The right man for you</p>
-            <p style="color: #666;">️ Your future husband!!</p>
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl">🎵</div>
+
+    <!-- 1. Questionnaire -->
+    <div class="question-phase" id="questionPhase">
+        <div class="progress-dots" id="progressDots">
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+        
+        <div class="question" id="q1">
+            <h2>Do you want a future with Atila? 🌟</h2>
+            <textarea rows="3"></textarea>
+            <button onclick="nextQuestion(2)">Next ➡️</button>
+        </div>
+        <div class="question" id="q2" style="display:none;">
+            <h2>How much do you love Atila? 💞</h2>
+            <textarea rows="3"></textarea>
+            <button onclick="nextQuestion(3)">Next ➡️</button>
+        </div>
+        <div class="question" id="q3" style="display:none;">
+            <h2>Where should we live when we are older? 🌍</h2>
+            <input type="text">
+            <button onclick="showSwipe()">Continue ➡️</button>
         </div>
     </div>
-</div>
 
-<!-- 3. Envelope -->
-<div class="envelope-container" id="envelopeContainer">
-    <div class="envelope">
-        <div class="envelope-front">
-            <div class="heart">💌</div>
-            <p>Click to open your surprise!</p>
-        </div>
-        <div class="envelope-back">
-            <div class="envelope-back-content">
-                <h3>To My Queen 💖</h3>
-                <p>The only and most beautiful</p>
-                <p>Will you be my valentines??</p>
-                <p>I love you so much</p>
-                <p> Your Prince <p>
+    <!-- 2. Swipe Section -->
+    <div class="swipe-container" id="swipeContainer">
+        <div class="profile-card" id="profileCard">
+            <img src="image0.jpg" class="profile-image" alt="Your Photo">
+            <div class="profile-info">
+                <h2>Atila : 16 yr</h2>
+                <p style="color: #ff3b3b;">The right man for you</p>
+                <p style="color: #666;">Your future husband!!</p>
             </div>
         </div>
     </div>
-</div>
 
-<script>
+    <!-- 3. Envelope -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope">
+            <div class="envelope-front">
+                <div class="heart">💌</div>
+                <p>Click to open your surprise!</p>
+            </div>
+            <div class="envelope-back">
+                <div class="love-letter">
+                    <h3>To My Queen 💖</h3>
+                    <p>In your eyes I found my home,</p>
+                    <p>In your heart I found my peace,</p>
+                    <p>With your hand I want to grow old,</p>
+                    <p>Will you be my Valentine?</p>
+                    <div class="signature">
+                        <p>Forever yours,</p>
+                        <p>Your Atila 💌</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
     // ======== CONFIG ======== //
-    const PHOTOS = [
-        '1.png',
-        '2.png',
-        '3.png'
-    ];
+    const PHOTOS = ['1.png', '2.png', '3.png'];
     const DEVIL_SITE = 'https://youtube.com/shorts/_ocaTEGBo-Y?si=Py_dOE3KGIOUG2iP';
     const SWIPE_THRESHOLD = 60;
+    const SWIPE_SOUND = 'https://assets.mixkit.co/sfx/preview/mixkit-game-ball-tap-2073.mp3';
     // ======================= //
 
     let currentQuestion = 1;
     let isSwiping = false;
     let startX = 0;
+    let currentDelta = 0;
+    let isMusicPlaying = false;
 
-    // 1. Questionnaire Flow
+    // Music Setup
+    const bgMusic = new Audio('your-romantic-song.mp3');
+    bgMusic.loop = true;
+    const musicControl = document.getElementById('musicControl');
+
+    // Progress Dots
+    function updateProgressDots() {
+        const dots = document.querySelectorAll('.progress-dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index < currentQuestion);
+        });
+    }
+
+    // Questionnaire Flow
     function nextQuestion(qNum) {
         document.getElementById(`q${currentQuestion}`).style.display = 'none';
         document.getElementById(`q${qNum}`).style.display = 'block';
         currentQuestion = qNum;
+        updateProgressDots();
     }
 
     function showSwipe() {
@@ -258,62 +369,68 @@
         initSwipe();
     }
 
-    // 2. Swipe Handling
+    // Swipe Handling
     function initSwipe() {
         const container = document.getElementById('swipeContainer');
+        const card = document.getElementById('profileCard');
+        let animationFrame;
 
-        container.addEventListener('touchstart', e => {
+        const handleStart = (clientX) => {
             isSwiping = true;
-            startX = e.touches[0].clientX;
-        });
+            startX = clientX;
+            currentDelta = 0;
+            card.style.transition = 'none';
+        };
 
-        container.addEventListener('touchmove', e => {
+        const handleMove = (clientX) => {
             if (!isSwiping) return;
-            const currentX = e.touches[0].clientX;
-            updateCardPosition(currentX - startX);
-        });
-
-        container.addEventListener('touchend', e => {
-            handleSwipeEnd(e.changedTouches[0].clientX - startX);
-            isSwiping = false;
-        });
-
-        container.addEventListener('mousedown', e => {
-            isSwiping = true;
-            startX = e.clientX;
-        });
-
-        container.addEventListener('mousemove', e => {
-            if (!isSwiping) return;
-            updateCardPosition(e.clientX - startX);
-        });
-
-        container.addEventListener('mouseup', e => {
-            handleSwipeEnd(e.clientX - startX);
-            isSwiping = false;
-        });
-
-        function updateCardPosition(delta) {
-            const card = document.getElementById('profileCard');
-            card.style.transform = `
-                    translate(calc(-50% + ${delta * 0.5}px), -50%)
-                    rotate(${delta * 0.1}deg)
+            cancelAnimationFrame(animationFrame);
+            
+            animationFrame = requestAnimationFrame(() => {
+                currentDelta = clientX - startX;
+                const rotation = Math.min(30, Math.max(-30, currentDelta * 0.15));
+                
+                card.style.transform = `
+                    translate(calc(-50% + ${currentDelta}px), -50%)
+                    rotate(${rotation}deg)
                 `;
-        }
+            });
+        };
 
-        function handleSwipeEnd(delta) {
-            if (Math.abs(delta) > SWIPE_THRESHOLD) {
-                if (delta > 0) { // Swiped Right
-                    showEnvelope();
+        const handleEnd = () => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            cancelAnimationFrame(animationFrame);
+            
+            card.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            
+            if (Math.abs(currentDelta) > SWIPE_THRESHOLD) {
+                new Audio(SWIPE_SOUND).play();
+                if (currentDelta > 0) { // Swiped Right
+                    card.style.transform = `translate(150%, -50%) rotate(30deg)`;
+                    setTimeout(showEnvelope, 300);
                 } else { // Swiped Left
-                    window.location.href = DEVIL_SITE;
+                    card.style.transform = `translate(-150%, -50%) rotate(-30deg)`;
+                    setTimeout(() => window.location.href = DEVIL_SITE, 300);
                 }
+            } else {
+                card.style.transform = 'translate(-50%, -50%)';
             }
-            document.getElementById('profileCard').style.transform = 'translate(-50%, -50%)';
-        }
+        };
+
+        // Event Listeners
+        container.addEventListener('touchstart', e => handleStart(e.touches[0].clientX));
+        container.addEventListener('touchmove', e => handleMove(e.touches[0].clientX));
+        container.addEventListener('touchend', handleEnd);
+
+        container.addEventListener('mousedown', e => handleStart(e.clientX));
+        container.addEventListener('mousemove', e => handleMove(e.clientX));
+        container.addEventListener('mouseup', handleEnd);
+
+        card.style.transform = 'translate(-50%, -50%)';
     }
 
-    // 3. Envelope & Surprises
+    // Envelope & Surprises
     function showEnvelope() {
         document.getElementById('swipeContainer').style.display = 'none';
         const envelopeContainer = document.getElementById('envelopeContainer');
@@ -353,6 +470,16 @@
         document.body.appendChild(confetti);
         setTimeout(() => confetti.remove(), 5000);
     }
-</script>
+
+    // Music Control
+    musicControl.addEventListener('click', () => {
+        isMusicPlaying = !isMusicPlaying;
+        musicControl.textContent = isMusicPlaying ? '🎵' : '🔇';
+        isMusicPlaying ? bgMusic.play() : bgMusic.pause();
+    });
+
+    // Initial setup
+    updateProgressDots();
+    </script>
 </body>
 </html>
